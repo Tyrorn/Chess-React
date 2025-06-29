@@ -1,3 +1,4 @@
+import { GameState } from "../services/GameEngine";
 import { Color, PieceType } from "../types/enums";
 
 export abstract class ChessPiece {
@@ -13,9 +14,11 @@ export abstract class ChessPiece {
     this.image = image;
   }
 
-  getImage = (): string => {
+  public getImage = (): string => {
     return this.image;
   };
 
-  abstract moveType: () => void;
+  public abstract moveType: () => void;
+
+  public abstract getAvailableMoves: (gameState: GameState) => void;
 }

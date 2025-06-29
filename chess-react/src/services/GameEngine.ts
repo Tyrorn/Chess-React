@@ -3,19 +3,26 @@ import { ChessPiece } from "../models/ChessPiece";
 import { Color, PieceType } from "../types/enums";
 import { PieceFactory } from "../factories/PieceFactory";
 
-export class GameEngine {
+export type GameState = {
   whitePieces: Map<string, ChessPiece>;
   blackPieces: Map<string, ChessPiece>;
   whosTurn: Color;
+};
+
+export class GameEngine {
+  gameState: GameState;
 
   constructor() {
-    this.whitePieces = new Map();
-    this.blackPieces = new Map();
-    this.whosTurn = Color.WHITE;
-    this.setUpPiecesState();
+    this.gameState = {
+      whitePieces: new Map(),
+      blackPieces: new Map(),
+      whosTurn: Color.WHITE,
+    };
+
+    this._setUpPiecesState();
   }
 
-  setUpPiecesState() {
+  private _setUpPiecesState() {
     const pieceFactory = PieceFactory();
     pieceMap.forEach((value, key) => {
       const position = key;
@@ -25,8 +32,30 @@ export class GameEngine {
       const newPiece = pieceFactory.create(pieceType, color, position);
 
       color === Color.WHITE
-        ? this.whitePieces.set(position, newPiece)
-        : this.blackPieces.set(position, newPiece);
+        ? this.gameState.whitePieces.set(position, newPiece)
+        : this.gameState.blackPieces.set(position, newPiece);
     });
+  }
+
+  public getAvailableMoves(tileKey: string): string[] {
+    let playersPieces: Map<string, ChessPiece>;
+    playersPieces =
+      this.gameState.whosTurn === Color.WHITE
+        ? this.gameState.whitePieces
+        : this.gameState.blackPieces;
+
+    if (!playersPieces.has(tileKey)) {
+      return [];
+    }
+
+    return playersPieces.get(tileKey)?.getAvailableMoves(this.gameState) || [];
+  }
+
+  public getPieceAtTile(tileKey: string) {
+    if (this.gameState.blackPieces.has(tileKey))
+      return this.gameState.blackPieces.get(tileKey);
+    if (this.gameState.whitePieces.has(tileKey))
+      return this.gameState.whitePieces.get(tileKey);
+    return undefined;
   }
 }
