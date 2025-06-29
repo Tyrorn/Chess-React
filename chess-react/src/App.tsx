@@ -1,11 +1,12 @@
 import { useState } from "react";
 import "./App.css";
 import Board from "./components/Board.tsx";
+import { GameEngine } from "./services/GameEngine.ts";
 
 function App() {
-  const [count, setCount] = useState(0);
+  let gameEngine: GameEngine = new GameEngine();
 
-  return <Board />;
+  return <Board engine={gameEngine} />;
 }
 
 export default App;
