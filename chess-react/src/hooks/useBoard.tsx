@@ -10,7 +10,10 @@ const colKeys: Array<string> = ["A", "B", "C", "D", "E", "F", "G", "H"];
 export const useBoard = () => {
   const [gameState, setGameState] = useState<Array<typeof BoardTile>>([]);
 
-  const setUp = (engine: GameEngine) => {
+  const setUp = (
+    engine: GameEngine,
+    onClickTile: (tileKey: string) => void
+  ) => {
     const squares: React.ReactNode[] = [];
 
     for (let row = 8; row > 0; row--) {
@@ -25,7 +28,14 @@ export const useBoard = () => {
         if (engine.whitePieces.get(tileKey))
           piece = <Piece image={getImageForPiece(pieceRef)} />;
 
-        squares.push(<BoardTile key={colKey + row} piece={piece} />);
+        squares.push(
+          <BoardTile
+            key={tileKey}
+            tileKey={tileKey}
+            piece={piece}
+            onClick={onClickTile}
+          />
+        );
       });
     }
     return squares;
