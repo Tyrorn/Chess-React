@@ -13,5 +13,9 @@ export abstract class ChessPiece {
     this.image = image;
   }
 
+  getImage = (): string => {
+    return this.image;
+  };
+
   abstract moveType: () => void;
 }

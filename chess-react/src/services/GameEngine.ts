@@ -1,7 +1,7 @@
 import { pieceMap } from "../data/startingPosition";
 import { ChessPiece } from "../models/ChessPiece";
-import { PawnChessPiece } from "../models/PawnChessPiece";
 import { Color, PieceType } from "../types/enums";
+import { PieceFactory } from "../factories/PieceFactory";
 
 export class GameEngine {
   whitePieces: Map<string, ChessPiece>;
@@ -16,19 +16,13 @@ export class GameEngine {
   }
 
   setUpPiecesState() {
+    const pieceFactory = PieceFactory();
     pieceMap.forEach((value, key) => {
-      //key A1, value white - Rook
       const position = key;
       const [colorString, pieceTypeString] = value.split(" - ");
-
       const color = colorString as Color;
       const pieceType = pieceTypeString as PieceType;
-      let newPiece: ChessPiece;
-      switch (pieceType) {
-        default:
-          newPiece = new PawnChessPiece(color, position);
-          break;
-      }
+      const newPiece = pieceFactory.create(pieceType, color, position);
 
       color === Color.WHITE
         ? this.whitePieces.set(position, newPiece)

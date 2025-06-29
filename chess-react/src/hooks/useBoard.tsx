@@ -23,10 +23,11 @@ export const useBoard = () => {
 
         //if piece exists in the game engine state, create a piece component to display in board tile
         const pieceRef: string = pieceMap.get(colKey + row) ?? "";
-        if (engine.blackPieces.get(tileKey))
-          piece = <Piece image={getImageForPiece(pieceRef)} />;
-        if (engine.whitePieces.get(tileKey))
-          piece = <Piece image={getImageForPiece(pieceRef)} />;
+
+        if (engine.blackPieces.has(tileKey))
+          piece = <Piece image={engine.blackPieces.get(tileKey)!.getImage()} />;
+        if (engine.whitePieces.has(tileKey))
+          piece = <Piece image={engine.whitePieces.get(tileKey)!.getImage()} />;
 
         squares.push(
           <BoardTile
