@@ -51,7 +51,13 @@ export class GameEngine {
     return playersPieces.get(tileKey)?.getAvailableMoves(this.gameState) || [];
   }
 
-  public getPieceAtTile(tileKey: string) {
+  // public hasPieceAtTile(tileKey: string): boolean {
+  //   if (this.gameState.blackPieces.has(tileKey)) return true;
+  //   if (this.gameState.whitePieces.has(tileKey)) return true;
+  //   return false;
+  // }
+
+  public getPieceAtTile(tileKey: string): ChessPiece | undefined {
     if (this.gameState.blackPieces.has(tileKey))
       return this.gameState.blackPieces.get(tileKey);
     if (this.gameState.whitePieces.has(tileKey))

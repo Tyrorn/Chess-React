@@ -1,4 +1,5 @@
 import { getImageForPiece } from "../data/pieceImages";
+import { GameState } from "../services/GameEngine";
 import { Color, PieceType } from "../types/enums";
 import { ChessPiece } from "./ChessPiece";
 
@@ -14,5 +15,9 @@ export class KingChessPiece extends ChessPiece {
 
   moveType = () => {
     console.log("King");
+  };
+
+  public getAvailableMoves = (gameState: GameState): string[] => {
+    return [];
   };
 }
