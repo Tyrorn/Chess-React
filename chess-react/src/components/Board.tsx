@@ -26,39 +26,15 @@ const Board: React.FC<BoardProps> = ({ engine }) => {
       setPieceMoving(piece);
       return;
     }
-    setPieceMoving(undefined);
-
-    //Scenario: a piece has been selected, we are moving to an empty tile
-    if (piece === undefined) {
-      // setPieceMoving(undefined);
-      if (pieceMoving === undefined) {
-        console.log("do nothing");
-        return;
-      }
-      //At this stage, we are not validating if valid move
-      let lastPosition: string = pieceMoving.position;
-      try {
-        engine.movePieceToTile(pieceMoving!, tileKey);
-        handlePieceChanges(lastPosition, tileKey);
-        setTileSelected("");
-      } catch (error) {
-        console.log(error);
-      }
-      return;
-    }
-
-    //Scenario: a piece has been selected, we are moving to a tile with a piece
-    let lastPosition: string = pieceMoving.position;
 
     try {
-      engine.movePieceToTile(pieceMoving!, tileKey);
+      let lastPosition: string = pieceMoving.position;
+      engine.updateGameState(pieceMoving, tileKey);
+
+      setPieceMoving(undefined);
       handlePieceChanges(lastPosition, tileKey);
       setTileSelected("");
-    } catch (error) {
-      console.log(error);
-    }
-
-    // engine.movePieceToTile(pieceMoving.position, tileKey);
+    } catch (error) {}
   };
 
   const handlePieceChanges = (oldPosition: string, newPosition: string) => {

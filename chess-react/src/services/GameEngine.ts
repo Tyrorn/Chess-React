@@ -99,4 +99,17 @@ export class GameEngine {
       return this.gameState.whitePieces.get(tileKey);
     return undefined;
   }
+
+  public updateGameState(piece: ChessPiece, newPosition: string) {
+    if (piece === undefined) {
+      console.log("do nothing");
+      return;
+    }
+
+    try {
+      this.movePieceToTile(piece!, newPosition);
+    } catch (error) {
+      throw new Error("Invalid move");
+    }
+  }
 }
