@@ -47,33 +47,27 @@ export class GameEngine {
     const pieceAtNewPosition: ChessPiece | undefined =
       this.getPieceAtTile(newPosition);
 
-    if (pieceAtNewPosition === undefined) {
-      this.gameState.whosTurn === Color.WHITE
-        ? this.gameState.whitePieces.delete(piece.position)
-        : this.gameState.blackPieces.delete(piece.position);
-
-      piece.setPosition(newPosition);
-      this.gameState.whosTurn === Color.WHITE
-        ? this.gameState.whitePieces.set(newPosition, piece)
-        : this.gameState.blackPieces.set(newPosition, piece);
-      return;
+    if (pieceAtNewPosition) {
+      this.takeEnemyPiece(newPosition);
     }
-    //replace enemy piece in new position
-    this.takeEnemyPiece(piece, newPosition);
+    this.setPieceInNewLocation(piece, newPosition);
   }
 
-  protected takeEnemyPiece(piece: ChessPiece, newPosition: string) {
-    // const enemyPiece: ChessPiece = this.getPieceAtTile(newPosition)!;
+  protected takeEnemyPiece(position: string) {
+    //Permanently enemy remove piece
     this.gameState.whosTurn === Color.WHITE
-      ? this.gameState.blackPieces.delete(newPosition)
-      : this.gameState.whitePieces.delete(newPosition);
+      ? this.gameState.blackPieces.delete(position)
+      : this.gameState.whitePieces.delete(position);
+  }
 
+  protected setPieceInNewLocation(piece: ChessPiece, newPosition: string) {
+    //Temporarily remove piece
     this.gameState.whosTurn === Color.WHITE
       ? this.gameState.whitePieces.delete(piece.position)
       : this.gameState.blackPieces.delete(piece.position);
 
+    //Set piece in new location
     piece.setPosition(newPosition);
-
     this.gameState.whosTurn === Color.WHITE
       ? this.gameState.whitePieces.set(newPosition, piece)
       : this.gameState.blackPieces.set(newPosition, piece);
@@ -84,6 +78,7 @@ export class GameEngine {
   }
 
   public getAvailableMoves(tileKey: string): string[] {
+    //TODO will need to factor in if moving results in checkmate
     let playersPieces: Map<string, ChessPiece>;
     playersPieces =
       this.gameState.whosTurn === Color.WHITE
