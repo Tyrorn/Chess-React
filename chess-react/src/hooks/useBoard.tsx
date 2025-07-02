@@ -10,8 +10,6 @@ const COLUMN_KEYS: Array<string> = ["A", "B", "C", "D", "E", "F", "G", "H"];
 export type TileData = {
   tileKey: string;
   piece?: React.ReactElement<typeof Piece>;
-  isSelected: string;
-  isHighlighted: string[];
 };
 
 export const useBoard = () => {
@@ -30,8 +28,6 @@ export const useBoard = () => {
         newTiles.push({
           tileKey,
           piece: piece,
-          isSelected: "",
-          isHighlighted: [],
         });
       });
     }

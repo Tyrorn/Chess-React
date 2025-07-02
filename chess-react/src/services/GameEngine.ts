@@ -26,15 +26,61 @@ export class GameEngine {
     const pieceFactory = PieceFactory();
     pieceMap.forEach((value, key) => {
       const position = key;
-      const [colorString, pieceTypeString] = value.split(" - ");
-      const color = colorString as Color;
-      const pieceType = pieceTypeString as PieceType;
+      const color: Color = value.split(" - ")[0] as Color;
+      const pieceType: PieceType = value.split(" - ")[1] as PieceType;
       const newPiece = pieceFactory.create(pieceType, color, position);
 
       color === Color.WHITE
         ? this.gameState.whitePieces.set(position, newPiece)
         : this.gameState.blackPieces.set(position, newPiece);
     });
+  }
+
+  public movePieceToTile(piece: ChessPiece, newPosition: string) {
+    if (!this.isValidMove(piece, newPosition)) {
+      throw new Error("Move is invalid");
+    }
+    this.updatePiecePosition(piece, newPosition);
+  }
+
+  protected updatePiecePosition(piece: ChessPiece, newPosition: string) {
+    const pieceAtNewPosition: ChessPiece | undefined =
+      this.getPieceAtTile(newPosition);
+
+    if (pieceAtNewPosition === undefined) {
+      this.gameState.whosTurn === Color.WHITE
+        ? this.gameState.whitePieces.delete(piece.position)
+        : this.gameState.blackPieces.delete(piece.position);
+
+      piece.setPosition(newPosition);
+      this.gameState.whosTurn === Color.WHITE
+        ? this.gameState.whitePieces.set(newPosition, piece)
+        : this.gameState.blackPieces.set(newPosition, piece);
+      return;
+    }
+    //replace enemy piece in new position
+    this.takeEnemyPiece(piece, newPosition);
+  }
+
+  protected takeEnemyPiece(piece: ChessPiece, newPosition: string) {
+    // const enemyPiece: ChessPiece = this.getPieceAtTile(newPosition)!;
+    this.gameState.whosTurn === Color.WHITE
+      ? this.gameState.blackPieces.delete(newPosition)
+      : this.gameState.whitePieces.delete(newPosition);
+
+    this.gameState.whosTurn === Color.WHITE
+      ? this.gameState.whitePieces.delete(piece.position)
+      : this.gameState.blackPieces.delete(piece.position);
+
+    piece.setPosition(newPosition);
+
+    this.gameState.whosTurn === Color.WHITE
+      ? this.gameState.whitePieces.set(newPosition, piece)
+      : this.gameState.blackPieces.set(newPosition, piece);
+  }
+
+  protected isValidMove(piece: ChessPiece, newPosition: string): boolean {
+    return this.getAvailableMoves(piece.position).includes(newPosition);
   }
 
   public getAvailableMoves(tileKey: string): string[] {
@@ -50,12 +96,6 @@ export class GameEngine {
 
     return playersPieces.get(tileKey)?.getAvailableMoves(this.gameState) || [];
   }
-
-  // public hasPieceAtTile(tileKey: string): boolean {
-  //   if (this.gameState.blackPieces.has(tileKey)) return true;
-  //   if (this.gameState.whitePieces.has(tileKey)) return true;
-  //   return false;
-  // }
 
   public getPieceAtTile(tileKey: string): ChessPiece | undefined {
     if (this.gameState.blackPieces.has(tileKey))

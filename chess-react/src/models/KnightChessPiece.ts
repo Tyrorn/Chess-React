@@ -12,7 +12,7 @@ const directions: Direction[] = [
   { x: -2, y: -1 }, //Left and up
   { x: -2, y: 1 }, //Left and down
 ];
-const isRepeatMovement: boolean = true;
+const isRepeatMovement: boolean = false;
 export class KnightChessPiece extends ChessPiece {
   constructor(color: Color, position: string) {
     super(

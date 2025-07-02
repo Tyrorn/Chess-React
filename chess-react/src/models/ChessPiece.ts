@@ -32,6 +32,10 @@ export abstract class ChessPiece {
     return this.image;
   }
 
+  public setPosition(position: string): void {
+    this.position = position;
+  }
+
   public getAvailableMoves(gameState: GameState): string[] {
     let availableMoves: string[] = [];
     const startingLocation = this.convertKeyToLocation(this.position);
