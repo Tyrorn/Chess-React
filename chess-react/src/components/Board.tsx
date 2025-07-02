@@ -7,65 +7,17 @@ import Piece from "./Piece";
 import { Color } from "../types/enums";
 import ResetGameButton from "./ResetGame";
 
-const Board: React.FC = () => {
-  const [gameEngine, setGameEngine] = useState<GameEngine>(new GameEngine());
-  const { resetTiles } = useBoard();
-  const [tiles, setTiles] = useState<TileData[]>(resetTiles(gameEngine));
-  const [pieceMoving, setPieceMoving] = useState<ChessPiece>();
+type BoardProps = {
+  gameEngine: GameEngine;
+};
+const Board: React.FC<BoardProps> = ({ gameEngine }) => {
+  const { startNewGame, updateMovingPiece, tiles, playersTurn, tileSelected } =
+    useBoard(gameEngine);
   const [isHighlighted, setIsHighlighted] = useState<string[]>([]);
   const [isSelected, setIsSelected] = useState<string>();
-  const [tileSelected, setTileSelected] = useState<string>("");
-  const [playersTurn, setPlayersTurn] = useState<string>(Color.WHITE);
 
   const handleOnClick = (tileKey: string) => {
-    const piece: ChessPiece | undefined = gameEngine.getPieceAtTile(tileKey);
-    setTileSelected(tileKey);
-
-    if (
-      pieceMoving === undefined &&
-      piece !== undefined &&
-      playersTurn !== piece.color
-    ) {
-      setPieceMoving(undefined);
-      return;
-    }
-
-    if (pieceMoving === undefined) {
-      setPieceMoving(piece);
-      return;
-    }
-
-    try {
-      let lastPosition: string = pieceMoving.position;
-      gameEngine.updateGameState(pieceMoving, tileKey);
-
-      handlePieceChanges(lastPosition, tileKey);
-    } catch (error) {
-      console.log(error.message);
-    }
-    setPlayersTurn(gameEngine.getWhosTurn());
-    setTileSelected("");
-    setPieceMoving(undefined);
-  };
-
-  const handlePieceChanges = (oldPosition: string, newPosition: string) => {
-    const piece: React.ReactElement<typeof Piece> = tiles.filter(
-      (x) => x.tileKey === oldPosition
-    )[0].piece!;
-
-    setTiles((prevTiles): TileData[] =>
-      prevTiles.map((tile) => {
-        return tile.tileKey === oldPosition || tile.tileKey === newPosition
-          ? tile.tileKey === oldPosition
-            ? { ...tile, piece: undefined }
-            : { ...tile, piece: piece }
-          : { ...tile };
-      })
-    );
-  };
-
-  const resetGame = (): void => {
-    setGameEngine(new GameEngine());
+    updateMovingPiece(tileKey);
   };
 
   const handleShowAvailableMoves = () => {
@@ -79,10 +31,7 @@ const Board: React.FC = () => {
   }, [tileSelected]);
 
   useEffect(() => {
-    setTiles(resetTiles(gameEngine));
-    setPlayersTurn(gameEngine.getWhosTurn());
-    setTileSelected("");
-    setPieceMoving(undefined);
+    startNewGame();
   }, [gameEngine]);
 
   return (
@@ -100,7 +49,6 @@ const Board: React.FC = () => {
           />
         ))}
       </div>
-      <ResetGameButton onClick={resetGame} />
     </>
   );
 };
