@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
-import BoardTile from "../components/BoardTile";
+import { useState } from "react";
 import Piece from "../components/Piece.tsx";
-import { getImageForPiece } from "../data/pieceImages.ts";
-import { pieceMap } from "../data/startingPosition.ts";
+
 import { GameEngine } from "../services/GameEngine.ts";
 import { ChessPiece } from "../models/ChessPiece.ts";
 import { Color } from "../types/enums.ts";

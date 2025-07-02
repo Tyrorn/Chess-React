@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { GameEngine } from "../services/GameEngine";
-import { TileData, useBoard } from "../hooks/useBoard";
+import { useBoard } from "../hooks/useBoard";
 import BoardTile from "./BoardTile";
-import { ChessPiece } from "../models/ChessPiece";
-import Piece from "./Piece";
-import { Color } from "../types/enums";
-import ResetGameButton from "./ResetGame";
 
 type BoardProps = {
   gameEngine: GameEngine;
