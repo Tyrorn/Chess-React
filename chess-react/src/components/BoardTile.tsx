@@ -6,7 +6,7 @@ type BoardTileProps = {
   isSelected: boolean;
   isHighlighted: boolean;
   piece?: React.ReactElement<typeof Piece>;
-  onClick: (tileKey: string) => void;
+  onClick?: (tileKey: string) => void;
 };
 
 const BoardTile: React.FC<BoardTileProps> = ({
@@ -17,13 +17,15 @@ const BoardTile: React.FC<BoardTileProps> = ({
   onClick,
 }) => {
   const handleOnClick = () => {
-    onClick(tileKey);
+    if (onClick) {
+      onClick(tileKey);
+    }
   };
   return (
     <div
-      className={`w-16 h-16 bg-white border border-black p-4
+      className={`w-18 h-18 bg-white  border border-black  p-3
     ${isSelected ? "bg-blue-200" : ""}
-     ${isHighlighted ? "border-4 border-yellow-400" : ""}
+     ${isHighlighted ? " border-3 border-yellow-400" : ""}
 
       `}
       onClick={handleOnClick}
@@ -35,3 +37,4 @@ const BoardTile: React.FC<BoardTileProps> = ({
 
 export default BoardTile;
 //
+// ${+tileKey.split("")[1] % 2 === 0 ? "bg-white" : "bg-black"}

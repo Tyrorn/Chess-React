@@ -7,6 +7,8 @@ export type GameState = {
   whitePieces: Map<string, ChessPiece>;
   blackPieces: Map<string, ChessPiece>;
   whosTurn: Color;
+  whitePiecesTaken: ChessPiece[];
+  blackPiecesTaken: ChessPiece[];
 };
 
 export class GameEngine {
@@ -17,6 +19,8 @@ export class GameEngine {
       whitePieces: new Map(),
       blackPieces: new Map(),
       whosTurn: Color.WHITE,
+      whitePiecesTaken: [],
+      blackPiecesTaken: [],
     };
 
     this._setUpPiecesState();
@@ -28,12 +32,22 @@ export class GameEngine {
       const position = key;
       const color: Color = value.split(" - ")[0] as Color;
       const pieceType: PieceType = value.split(" - ")[1] as PieceType;
-      const newPiece = pieceFactory.create(pieceType, color, position);
+      const newPiece: ChessPiece = pieceFactory.create(
+        pieceType,
+        color,
+        position
+      );
 
       color === Color.WHITE
         ? this.gameState.whitePieces.set(position, newPiece)
         : this.gameState.blackPieces.set(position, newPiece);
     });
+  }
+
+  public getTakenPieces(): ChessPiece[] {
+    return this.gameState.blackPiecesTaken.concat(
+      this.gameState.whitePiecesTaken
+    );
   }
 
   public movePieceToTile(piece: ChessPiece, newPosition: string) {
@@ -55,9 +69,25 @@ export class GameEngine {
 
   protected takeEnemyPiece(position: string) {
     //Permanently enemy remove piece
-    this.gameState.whosTurn === Color.WHITE
-      ? this.gameState.blackPieces.delete(position)
-      : this.gameState.whitePieces.delete(position);
+    if (
+      this.gameState.whosTurn === Color.WHITE &&
+      this.gameState.blackPieces.has(position)
+    ) {
+      this.gameState.blackPiecesTaken.push(
+        this.gameState.blackPieces.get(position)!
+      );
+      this.gameState.blackPieces.delete(position);
+    }
+
+    if (
+      this.gameState.whosTurn === Color.BLACK &&
+      this.gameState.whitePieces.has(position)
+    ) {
+      this.gameState.whitePiecesTaken.push(
+        this.gameState.whitePieces.get(position)!
+      );
+      this.gameState.whitePieces.delete(position);
+    }
   }
 
   protected setPieceInNewLocation(piece: ChessPiece, newPosition: string) {

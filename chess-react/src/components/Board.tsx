@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { GameEngine } from "../services/GameEngine";
-import { useBoard } from "../hooks/useBoard";
+import { TileData, useBoard } from "../hooks/useBoard";
 import BoardTile from "./BoardTile";
 import { GameStatus } from "../types/enums";
+import { pieceMap } from "../data/startingPosition";
+import { ChessPiece } from "../models/ChessPiece";
 
 type BoardProps = {
   gameEngine: GameEngine;
   updateUserMessage: (gameStatus: GameStatus) => void;
+  onPieceTaken: (piecesTaken: ChessPiece[]) => void;
 };
-const Board: React.FC<BoardProps> = ({ gameEngine, updateUserMessage }) => {
+const Board: React.FC<BoardProps> = ({
+  gameEngine,
+  updateUserMessage,
+  onPieceTaken,
+}) => {
   const {
     startNewGame,
     updateMovingPiece,
@@ -16,7 +23,9 @@ const Board: React.FC<BoardProps> = ({ gameEngine, updateUserMessage }) => {
     playersTurn,
     tileSelected,
     gameStatus,
+    piecesTaken,
   } = useBoard(gameEngine);
+
   const [isHighlighted, setIsHighlighted] = useState<string[]>([]);
   const [isSelected, setIsSelected] = useState<string>();
 
@@ -24,14 +33,10 @@ const Board: React.FC<BoardProps> = ({ gameEngine, updateUserMessage }) => {
     updateMovingPiece(tileKey);
   };
 
-  const updateTileState = () => {
+  useEffect(() => {
     let availableMoves = gameEngine.getAvailableMoves(tileSelected);
     setIsSelected(tileSelected);
     setIsHighlighted([...availableMoves]);
-  };
-
-  useEffect(() => {
-    updateTileState();
   }, [tileSelected]);
 
   useEffect(() => {
@@ -42,10 +47,14 @@ const Board: React.FC<BoardProps> = ({ gameEngine, updateUserMessage }) => {
     updateUserMessage(gameStatus);
   }, [gameStatus]);
 
+  useEffect(() => {
+    onPieceTaken(piecesTaken);
+  }, [piecesTaken]);
+
   return (
     <>
       <header>Players turn: {playersTurn}</header>
-      <div className="grid grid-cols-8">
+      <div className="grid grid-cols-8 gap-x-1">
         {tiles.map((tile) => (
           <BoardTile
             key={tile.tileKey}

@@ -20,6 +20,7 @@ export const useBoard = (gameEngine: GameEngine) => {
   const [gameStatus, setGameStatus] = useState<GameStatus>(
     GameStatus.GAME_STARTED
   );
+  const [piecesTaken, setPiecesTaken] = useState<ChessPiece[]>([]);
 
   const startNewGame = () => {
     let newTiles: TileData[] = [];
@@ -43,6 +44,7 @@ export const useBoard = (gameEngine: GameEngine) => {
     }
     resetInternalState();
     setTiles(newTiles);
+    setPiecesTaken([]);
     setGameStatus(GameStatus.GAME_STARTED);
   };
 
@@ -67,12 +69,17 @@ export const useBoard = (gameEngine: GameEngine) => {
     try {
       let lastPosition: string = pieceMoving.position;
       gameEngine.updateGameState(pieceMoving, tileKey);
+      updatePiecesTaken();
 
       updateBoardTiles(lastPosition, tileKey);
     } catch (error) {
       console.log(error.message);
     }
     resetInternalState();
+  };
+
+  const updatePiecesTaken = () => {
+    setPiecesTaken(gameEngine.getTakenPieces());
   };
 
   const resetInternalState = () => {
@@ -105,5 +112,6 @@ export const useBoard = (gameEngine: GameEngine) => {
     playersTurn,
     tileSelected,
     gameStatus,
+    piecesTaken,
   };
 };
