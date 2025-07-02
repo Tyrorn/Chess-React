@@ -92,6 +92,20 @@ export class GameEngine {
     return playersPieces.get(tileKey)?.getAvailableMoves(this.gameState) || [];
   }
 
+  protected changePlayer() {
+    this.gameState.whosTurn === Color.WHITE
+      ? this.setWhosTurn(Color.BLACK)
+      : this.setWhosTurn(Color.WHITE);
+  }
+
+  protected setWhosTurn(player: Color) {
+    this.gameState.whosTurn = player;
+  }
+
+  public getWhosTurn(): Color {
+    return this.gameState.whosTurn;
+  }
+
   public getPieceAtTile(tileKey: string): ChessPiece | undefined {
     if (this.gameState.blackPieces.has(tileKey))
       return this.gameState.blackPieces.get(tileKey);
@@ -107,9 +121,11 @@ export class GameEngine {
     }
 
     try {
-      this.movePieceToTile(piece!, newPosition);
+      this.movePieceToTile(piece, newPosition);
     } catch (error) {
       throw new Error("Invalid move");
     }
+
+    this.changePlayer();
   }
 }

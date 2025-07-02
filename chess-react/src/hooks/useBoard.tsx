@@ -13,7 +13,7 @@ export type TileData = {
 };
 
 export const useBoard = () => {
-  const setUp = (engine: GameEngine) => {
+  const resetTiles = (engine: GameEngine) => {
     let newTiles: TileData[] = [];
 
     for (let row = 8; row > 0; row--) {
@@ -34,5 +34,5 @@ export const useBoard = () => {
     return newTiles;
   };
 
-  return { setUp };
+  return { resetTiles };
 };
