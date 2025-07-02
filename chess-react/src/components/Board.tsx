@@ -7,11 +7,7 @@ import Piece from "./Piece";
 import { Color } from "../types/enums";
 import ResetGameButton from "./ResetGame";
 
-type BoardProps = {
-  gameEngine: GameEngine;
-};
-
-const Board: React.FC<BoardProps> = () => {
+const Board: React.FC = () => {
   const [gameEngine, setGameEngine] = useState<GameEngine>(new GameEngine());
   const { resetTiles } = useBoard();
   const [tiles, setTiles] = useState<TileData[]>(resetTiles(gameEngine));
