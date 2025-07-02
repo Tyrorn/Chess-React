@@ -11,3 +11,12 @@ export const enum PieceType {
   QUEEN = "Queen",
   KING = "King",
 }
+
+export const enum GameStatus {
+  CHECK = "Check",
+  CHECKMATE = "Checkmate",
+  STALEMATE = "Stalemate",
+  ONGOING = "Ongoing",
+  GAME_OVER = "Game Over!!",
+  GAME_STARTED = "Game has begun",
+}

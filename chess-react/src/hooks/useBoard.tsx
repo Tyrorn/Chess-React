@@ -3,7 +3,7 @@ import Piece from "../components/Piece.tsx";
 
 import { GameEngine } from "../services/GameEngine.ts";
 import { ChessPiece } from "../models/ChessPiece.ts";
-import { Color } from "../types/enums.ts";
+import { Color, GameStatus } from "../types/enums.ts";
 
 const COLUMN_KEYS: Array<string> = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
@@ -17,6 +17,9 @@ export const useBoard = (gameEngine: GameEngine) => {
   const [pieceMoving, setPieceMoving] = useState<ChessPiece>();
   const [tileSelected, setTileSelected] = useState<string>("");
   const [playersTurn, setPlayersTurn] = useState<string>(Color.WHITE);
+  const [gameStatus, setGameStatus] = useState<GameStatus>(
+    GameStatus.GAME_STARTED
+  );
 
   const startNewGame = () => {
     let newTiles: TileData[] = [];
@@ -40,6 +43,7 @@ export const useBoard = (gameEngine: GameEngine) => {
     }
     resetInternalState();
     setTiles(newTiles);
+    setGameStatus(GameStatus.GAME_STARTED);
   };
 
   const updateMovingPiece = (tileKey: string) => {
@@ -100,5 +104,6 @@ export const useBoard = (gameEngine: GameEngine) => {
     updateMovingPiece,
     playersTurn,
     tileSelected,
+    gameStatus,
   };
 };

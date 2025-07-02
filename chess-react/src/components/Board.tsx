@@ -2,13 +2,21 @@ import React, { useEffect, useState } from "react";
 import { GameEngine } from "../services/GameEngine";
 import { useBoard } from "../hooks/useBoard";
 import BoardTile from "./BoardTile";
+import { GameStatus } from "../types/enums";
 
 type BoardProps = {
   gameEngine: GameEngine;
+  updateUserMessage: (gameStatus: GameStatus) => void;
 };
-const Board: React.FC<BoardProps> = ({ gameEngine }) => {
-  const { startNewGame, updateMovingPiece, tiles, playersTurn, tileSelected } =
-    useBoard(gameEngine);
+const Board: React.FC<BoardProps> = ({ gameEngine, updateUserMessage }) => {
+  const {
+    startNewGame,
+    updateMovingPiece,
+    tiles,
+    playersTurn,
+    tileSelected,
+    gameStatus,
+  } = useBoard(gameEngine);
   const [isHighlighted, setIsHighlighted] = useState<string[]>([]);
   const [isSelected, setIsSelected] = useState<string>();
 
@@ -16,19 +24,23 @@ const Board: React.FC<BoardProps> = ({ gameEngine }) => {
     updateMovingPiece(tileKey);
   };
 
-  const handleShowAvailableMoves = () => {
+  const updateTileState = () => {
     let availableMoves = gameEngine.getAvailableMoves(tileSelected);
     setIsSelected(tileSelected);
     setIsHighlighted([...availableMoves]);
   };
 
   useEffect(() => {
-    handleShowAvailableMoves();
+    updateTileState();
   }, [tileSelected]);
 
   useEffect(() => {
     startNewGame();
   }, [gameEngine]);
+
+  useEffect(() => {
+    updateUserMessage(gameStatus);
+  }, [gameStatus]);
 
   return (
     <>
