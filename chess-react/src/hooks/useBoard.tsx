@@ -9,7 +9,7 @@ const COLUMN_KEYS: Array<string> = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
 export type TileData = {
   tileKey: string;
-  piece?: React.ReactElement<typeof Piece>;
+  piece?: string;
 };
 
 export const useBoard = (gameEngine: GameEngine) => {
@@ -28,17 +28,15 @@ export const useBoard = (gameEngine: GameEngine) => {
     for (let row = 8; row > 0; row--) {
       COLUMN_KEYS.forEach((colKey) => {
         const tileKey: string = colKey + row;
-        let piece: React.ReactElement<typeof Piece> | undefined;
+        let pieceImage: string | undefined;
 
         if (gameEngine.getPieceAtTile(tileKey)) {
-          piece = (
-            <Piece image={gameEngine.getPieceAtTile(tileKey)!.getImage()} />
-          );
+          pieceImage = gameEngine.getPieceAtTile(tileKey)!.getImage();
         }
 
         newTiles.push({
           tileKey,
-          piece: piece,
+          piece: pieceImage,
         });
       });
     }
@@ -89,9 +87,8 @@ export const useBoard = (gameEngine: GameEngine) => {
   };
 
   const updateBoardTiles = (oldPosition: string, newPosition: string) => {
-    const piece: React.ReactElement<typeof Piece> = tiles.filter(
-      (x) => x.tileKey === oldPosition
-    )[0].piece!;
+    const piece: string = tiles.filter((x) => x.tileKey === oldPosition)[0]
+      .piece!;
 
     setTiles((prevTiles): TileData[] =>
       prevTiles.map((tile) => {

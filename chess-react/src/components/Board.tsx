@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { GameEngine } from "../services/GameEngine";
-import { TileData, useBoard } from "../hooks/useBoard";
+import { useBoard } from "../hooks/useBoard";
 import BoardTile from "./BoardTile";
 import { GameStatus } from "../types/enums";
-import { pieceMap } from "../data/startingPosition";
 import { ChessPiece } from "../models/ChessPiece";
 
 type BoardProps = {
@@ -59,7 +58,7 @@ const Board: React.FC<BoardProps> = ({
           <BoardTile
             key={tile.tileKey}
             tileKey={tile.tileKey}
-            piece={tile.piece}
+            pieceImage={tile.piece}
             isSelected={tile.tileKey === isSelected}
             isHighlighted={isHighlighted.includes(tile.tileKey)}
             onClick={handleOnClick}

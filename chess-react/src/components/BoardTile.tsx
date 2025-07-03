@@ -5,7 +5,7 @@ type BoardTileProps = {
   tileKey: string;
   isSelected: boolean;
   isHighlighted: boolean;
-  piece?: React.ReactElement<typeof Piece>;
+  pieceImage?: string;
   onClick?: (tileKey: string) => void;
 };
 
@@ -13,7 +13,7 @@ const BoardTile: React.FC<BoardTileProps> = ({
   isHighlighted,
   isSelected,
   tileKey,
-  piece,
+  pieceImage,
   onClick,
 }) => {
   const handleOnClick = () => {
@@ -30,7 +30,7 @@ const BoardTile: React.FC<BoardTileProps> = ({
       `}
       onClick={handleOnClick}
     >
-      {piece ?? ""}
+      {pieceImage ? <Piece image={pieceImage} /> : ""}
     </div>
   );
 };

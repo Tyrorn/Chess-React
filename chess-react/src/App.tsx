@@ -38,7 +38,7 @@ function App() {
             <BoardTile
               key={index}
               tileKey={index.toString()}
-              piece={<Piece image={piece.image} />}
+              pieceImage={piece.image ? piece.image : ""}
               isSelected={false}
               isHighlighted={false}
             />
@@ -59,7 +59,7 @@ function App() {
             <BoardTile
               key={index}
               tileKey={index.toString()}
-              piece={<Piece image={piece.image} />}
+              pieceImage={piece.image}
               isSelected={false}
               isHighlighted={false}
             />
