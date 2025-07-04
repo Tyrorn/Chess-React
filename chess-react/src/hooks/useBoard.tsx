@@ -1,6 +1,4 @@
-import { useState } from "react";
-import Piece from "../components/Piece.tsx";
-
+import { useEffect, useState } from "react";
 import { GameEngine } from "../services/GameEngine.ts";
 import { ChessPiece } from "../models/ChessPiece.ts";
 import { Color, GameStatus } from "../types/enums.ts";
@@ -10,6 +8,8 @@ const COLUMN_KEYS: Array<string> = ["A", "B", "C", "D", "E", "F", "G", "H"];
 export type TileData = {
   tileKey: string;
   piece?: string;
+  isHighlighted: boolean;
+  isSelected: boolean;
 };
 
 export const useBoard = (gameEngine: GameEngine) => {
@@ -37,6 +37,8 @@ export const useBoard = (gameEngine: GameEngine) => {
         newTiles.push({
           tileKey,
           piece: pieceImage,
+          isHighlighted: false,
+          isSelected: false,
         });
       });
     }
@@ -45,6 +47,10 @@ export const useBoard = (gameEngine: GameEngine) => {
     setPiecesTaken([]);
     setGameStatus(GameStatus.GAME_STARTED);
   };
+
+  useEffect(() => {
+    startNewGame();
+  }, [gameEngine]);
 
   const updateMovingPiece = (tileKey: string) => {
     const piece: ChessPiece | undefined = gameEngine.getPieceAtTile(tileKey);
@@ -100,6 +106,20 @@ export const useBoard = (gameEngine: GameEngine) => {
       })
     );
   };
+
+  useEffect(() => {
+    let availableMoves = gameEngine.getAvailableMoves(tileSelected);
+
+    setTiles((prevTiles): TileData[] =>
+      prevTiles.map((tile) => {
+        return {
+          ...tile,
+          isHighlighted: availableMoves.includes(tile.tileKey),
+          isSelected: tile.tileKey === tileSelected,
+        };
+      })
+    );
+  }, [tileSelected]);
 
   return {
     startNewGame,

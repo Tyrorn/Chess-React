@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { GameEngine } from "../services/GameEngine";
 import { useBoard } from "../hooks/useBoard";
 import BoardTile from "./BoardTile";
@@ -15,32 +15,12 @@ const Board: React.FC<BoardProps> = ({
   updateUserMessage,
   onPieceTaken,
 }) => {
-  const {
-    startNewGame,
-    updateMovingPiece,
-    tiles,
-    playersTurn,
-    tileSelected,
-    gameStatus,
-    piecesTaken,
-  } = useBoard(gameEngine);
-
-  const [isHighlighted, setIsHighlighted] = useState<string[]>([]);
-  const [isSelected, setIsSelected] = useState<string>();
+  const { updateMovingPiece, tiles, playersTurn, gameStatus, piecesTaken } =
+    useBoard(gameEngine);
 
   const handleOnClick = (tileKey: string) => {
     updateMovingPiece(tileKey);
   };
-
-  useEffect(() => {
-    let availableMoves = gameEngine.getAvailableMoves(tileSelected);
-    setIsSelected(tileSelected);
-    setIsHighlighted([...availableMoves]);
-  }, [tileSelected]);
-
-  useEffect(() => {
-    startNewGame();
-  }, [gameEngine]);
 
   useEffect(() => {
     updateUserMessage(gameStatus);
@@ -59,8 +39,8 @@ const Board: React.FC<BoardProps> = ({
             key={tile.tileKey}
             tileKey={tile.tileKey}
             pieceImage={tile.piece}
-            isSelected={tile.tileKey === isSelected}
-            isHighlighted={isHighlighted.includes(tile.tileKey)}
+            isSelected={tile.isSelected}
+            isHighlighted={tile.isHighlighted}
             onClick={handleOnClick}
           />
         ))}

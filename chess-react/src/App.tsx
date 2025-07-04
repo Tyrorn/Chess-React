@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import Board from "./components/Board.tsx";
 import ResetGameButton from "./components/ResetGame.tsx";
 import { GameEngine } from "./services/GameEngine.ts";
 import { Color, GameStatus } from "./types/enums.ts";
 import BoardTile from "./components/BoardTile.tsx";
-import Piece from "./components/Piece.tsx";
 import { ChessPiece } from "./models/ChessPiece.ts";
 
 function App() {
