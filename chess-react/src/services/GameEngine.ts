@@ -2,6 +2,7 @@ import { pieceMap } from "../data/startingPosition";
 import { ChessPiece } from "../models/ChessPiece";
 import { Color, GameStatus, PieceType } from "../types/enums";
 import { PieceFactory } from "../factories/PieceFactory";
+import { KingChessPiece } from "../models/KingChessPiece";
 
 export type GameState = {
   whitePieces: Map<string, ChessPiece>;
@@ -120,10 +121,36 @@ export class GameEngine {
         ? this.gameState.whitePieces
         : this.gameState.blackPieces;
 
-    if (!playersPieces.has(tileKey)) {
+    const playersPiece = playersPieces.get(tileKey);
+    if (!playersPiece) {
       return [];
     }
-    return playersPieces.get(tileKey)?.getAvailableMoves(this.gameState) || [];
+
+    const availableMoves = playersPiece.getAvailableMoves(this.gameState);
+
+    if (playersPiece.type !== PieceType.KING) {
+      return availableMoves;
+    }
+
+    const enemyMoves = this.getEnemyMoves();
+
+    for (let i = 0; i < availableMoves.length; i++) {
+      if (enemyMoves.includes(availableMoves[i])) {
+        availableMoves.splice(i, 1);
+        i--;
+      }
+    }
+
+    return availableMoves;
+  }
+
+  protected getEnemyMoves(): string[] {
+    const enemyMoves: string[] =
+      this.gameState.whosTurn === Color.WHITE
+        ? this.getAllBlackMoves()
+        : this.getAllWhiteMoves();
+
+    return enemyMoves;
   }
 
   protected isCurrentPlayerInCheck(): boolean {
