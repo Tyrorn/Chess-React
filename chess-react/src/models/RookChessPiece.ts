@@ -20,4 +20,8 @@ export class RookChessPiece extends ChessPiece {
       isRepeatMovement
     );
   }
+
+  public clone(): ChessPiece {
+    return new RookChessPiece(this.color, this.position);
+  }
 }

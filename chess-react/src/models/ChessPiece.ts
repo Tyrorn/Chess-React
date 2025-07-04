@@ -28,6 +28,8 @@ export abstract class ChessPiece {
     this.isRepeatMovement = isRepeatMovement;
   }
 
+  public abstract clone(): ChessPiece;
+
   public getImage(): string {
     return this.image;
   }

@@ -25,4 +25,8 @@ export class QueenChessPiece extends ChessPiece {
       isRepeatMovement
     );
   }
+
+  public clone(): ChessPiece {
+    return new QueenChessPiece(this.color, this.position);
+  }
 }

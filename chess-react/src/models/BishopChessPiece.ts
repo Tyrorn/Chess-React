@@ -22,4 +22,8 @@ export class BishopChessPiece extends ChessPiece {
       isRepeatMovement
     );
   }
+
+  public clone(): ChessPiece {
+    return new BishopChessPiece(this.color, this.position);
+  }
 }

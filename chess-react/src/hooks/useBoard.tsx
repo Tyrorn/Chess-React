@@ -45,7 +45,7 @@ export const useBoard = (gameEngine: GameEngine) => {
     resetInternalState();
     setTiles(newTiles);
     setPiecesTaken([]);
-    setGameStatus(GameStatus.GAME_STARTED);
+    setGameStatus(gameEngine.getGameStatus());
   };
 
   useEffect(() => {
@@ -81,6 +81,7 @@ export const useBoard = (gameEngine: GameEngine) => {
       let lastPosition: string = pieceMoving.position;
       gameEngine.updateGameState(pieceMoving, tileKey);
       updatePiecesTaken();
+      setGameStatus(gameEngine.getGameStatus());
 
       updateBoardTiles(lastPosition, tileKey);
     } catch (error) {

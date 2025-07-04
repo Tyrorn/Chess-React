@@ -27,6 +27,10 @@ export class PawnChessPiece extends ChessPiece {
     ];
   }
 
+  public clone(): ChessPiece {
+    return new PawnChessPiece(this.color, this.position);
+  }
+
   public getAvailableMoves(gameState: GameState): string[] {
     let availableMoves: string[] = [];
     const startingLocation = this.convertKeyToLocation(this.position);
