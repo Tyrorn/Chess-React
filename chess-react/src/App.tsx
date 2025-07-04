@@ -33,7 +33,7 @@ function App() {
       <div className="grid [grid-template-columns:10%_80%_10%]">
         <div className="grid grid-cols-2">
           <header>White</header>
-          {whitePiecesTaken.map((piece, index) => (
+          {/* {whitePiecesTaken.map((piece, index) => (
             <BoardTile
               key={index}
               tileKey={index.toString()}
@@ -41,7 +41,7 @@ function App() {
               isSelected={false}
               isHighlighted={false}
             />
-          ))}
+          ))} */}
         </div>
 
         <div>
@@ -54,7 +54,7 @@ function App() {
 
         <div className="grid grid-cols-2">
           <div>black</div>
-          {blackPiecesTaken.map((piece, index) => (
+          {/* {blackPiecesTaken.map((piece, index) => (
             <BoardTile
               key={index}
               tileKey={index.toString()}
@@ -62,7 +62,7 @@ function App() {
               isSelected={false}
               isHighlighted={false}
             />
-          ))}
+          ))} */}
         </div>
       </div>
       <ResetGameButton onClick={resetGame} />

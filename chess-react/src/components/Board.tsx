@@ -33,7 +33,7 @@ const Board: React.FC<BoardProps> = ({
   return (
     <>
       <header>Players turn: {playersTurn}</header>
-      <div className="grid grid-cols-8 gap-x-1">
+      <div className="grid grid-cols-8 ">
         {tiles.map((tile) => (
           <BoardTile
             key={tile.tileKey}

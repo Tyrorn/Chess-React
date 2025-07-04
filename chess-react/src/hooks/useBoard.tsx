@@ -56,6 +56,7 @@ export const useBoard = (gameEngine: GameEngine) => {
     const piece: ChessPiece | undefined = gameEngine.getPieceAtTile(tileKey);
     setTileSelected(tileKey);
 
+    //When selecting a piece that doesn't belong to the current player
     if (
       pieceMoving === undefined &&
       piece !== undefined &&
@@ -64,8 +65,14 @@ export const useBoard = (gameEngine: GameEngine) => {
       setPieceMoving(undefined);
       return;
     }
-
+    //When first selecting your piece, or selecting an empty tile
     if (pieceMoving === undefined) {
+      setPieceMoving(piece);
+      return;
+    }
+
+    //If selecting a different piece of the same color
+    if (pieceMoving.color === piece?.color) {
       setPieceMoving(piece);
       return;
     }
@@ -109,6 +116,8 @@ export const useBoard = (gameEngine: GameEngine) => {
 
   useEffect(() => {
     let availableMoves = gameEngine.getAvailableMoves(tileSelected);
+
+    // if (availableMoves.length === 0) return;
 
     setTiles((prevTiles): TileData[] =>
       prevTiles.map((tile) => {

@@ -50,7 +50,7 @@ export class GameEngine {
     );
   }
 
-  public movePieceToTile(piece: ChessPiece, newPosition: string) {
+  protected movePieceToTile(piece: ChessPiece, newPosition: string) {
     if (!this.isValidMove(piece, newPosition)) {
       throw new Error("Move is invalid");
     }
@@ -104,11 +104,14 @@ export class GameEngine {
   }
 
   protected isValidMove(piece: ChessPiece, newPosition: string): boolean {
-    return this.getAvailableMoves(piece.position).includes(newPosition);
+    return this._getAvailableMoves(piece.position).includes(newPosition);
   }
 
   public getAvailableMoves(tileKey: string): string[] {
-    //TODO will need to factor in if moving results in checkmate
+    return this._getAvailableMoves(tileKey);
+  }
+
+  protected _getAvailableMoves(tileKey: string): string[] {
     let playersPieces: Map<string, ChessPiece>;
     playersPieces =
       this.gameState.whosTurn === Color.WHITE
@@ -118,8 +121,76 @@ export class GameEngine {
     if (!playersPieces.has(tileKey)) {
       return [];
     }
-
     return playersPieces.get(tileKey)?.getAvailableMoves(this.gameState) || [];
+  }
+
+  protected canMovePieceWithoutCheck(tileKey: string): boolean {
+    if (this.gameState.whosTurn === Color.WHITE) {
+      let tempPiece = this.gameState.whitePieces.get(tileKey);
+      this.gameState.whitePieces.delete(tileKey);
+      const whiteKing = this.getWhiteKing();
+      const blackMoves = this.getAllBlackMoves();
+
+      this.gameState.whitePieces.set(tileKey, tempPiece!);
+      if (blackMoves.includes(whiteKing.position)) {
+        return false;
+      }
+      return true;
+    }
+
+    if (this.gameState.whosTurn === Color.BLACK) {
+      let tempPiece = this.gameState.blackPieces.get(tileKey);
+      this.gameState.blackPieces.delete(tileKey);
+      const blackKing = this.getBlackKing();
+      const whiteMoves = this.getAllWhiteMoves();
+
+      this.gameState.blackPieces.set(tileKey, tempPiece!);
+      if (whiteMoves.includes(blackKing.position)) {
+        return false;
+      }
+      return true;
+    }
+    return true;
+  }
+
+  protected getBlackKing(): ChessPiece {
+    for (const [key, value] of this.gameState.blackPieces) {
+      if (value.type === PieceType.KING) {
+        return value;
+      }
+    }
+    throw new Error("Black King not found — this should never happen");
+  }
+
+  protected getWhiteKing(): ChessPiece {
+    for (const [key, value] of this.gameState.whitePieces) {
+      if (value.type === PieceType.KING) {
+        return value;
+      }
+    }
+    throw new Error("White King not found — this should never happen");
+  }
+
+  protected getAllBlackMoves(): string[] {
+    let availableBlackMoves: string[] = [];
+    this.gameState.blackPieces.forEach(
+      (piece) =>
+        (availableBlackMoves = availableBlackMoves.concat(
+          this._getAvailableMoves(piece.position)
+        ))
+    );
+    return availableBlackMoves;
+  }
+
+  protected getAllWhiteMoves(): string[] {
+    let availableWhiteMoves: string[] = [];
+    this.gameState.whitePieces.forEach(
+      (piece) =>
+        (availableWhiteMoves = availableWhiteMoves.concat(
+          this._getAvailableMoves(piece.position)
+        ))
+    );
+    return availableWhiteMoves;
   }
 
   protected changePlayer() {
@@ -149,6 +220,11 @@ export class GameEngine {
       console.log("do nothing");
       return;
     }
+
+    // //If moving piece results in check, return no moves
+    // if (!this.canMovePieceWithoutCheck(newPosition)) {
+    //   throw new Error("Can't put yourself in check");
+    // }
 
     try {
       this.movePieceToTile(piece, newPosition);
