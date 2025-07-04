@@ -116,9 +116,6 @@ export const useBoard = (gameEngine: GameEngine) => {
 
   useEffect(() => {
     let availableMoves = gameEngine.getAvailableMoves(tileSelected);
-
-    // if (availableMoves.length === 0) return;
-
     setTiles((prevTiles): TileData[] =>
       prevTiles.map((tile) => {
         return {

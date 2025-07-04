@@ -176,7 +176,7 @@ export class GameEngine {
     this.gameState.blackPieces.forEach(
       (piece) =>
         (availableBlackMoves = availableBlackMoves.concat(
-          this._getAvailableMoves(piece.position)
+          piece.getAvailableMoves(this.gameState)
         ))
     );
     return availableBlackMoves;
@@ -187,7 +187,7 @@ export class GameEngine {
     this.gameState.whitePieces.forEach(
       (piece) =>
         (availableWhiteMoves = availableWhiteMoves.concat(
-          this._getAvailableMoves(piece.position)
+          piece.getAvailableMoves(this.gameState)
         ))
     );
     return availableWhiteMoves;
@@ -221,16 +221,21 @@ export class GameEngine {
       return;
     }
 
-    // //If moving piece results in check, return no moves
-    // if (!this.canMovePieceWithoutCheck(newPosition)) {
+    // // //If moving piece results in check, return no moves
+    // if (!this.canMovePieceWithoutCheck(piece.position)) {
     //   throw new Error("Can't put yourself in check");
     // }
+
+    //create temp state
 
     try {
       this.movePieceToTile(piece, newPosition);
     } catch (error) {
       throw new Error("Invalid move");
     }
+    //check if game state is now valid
+    //if yes, great
+    //if no, is it check, checkmate, or stalemate?
 
     this.changePlayer();
   }
