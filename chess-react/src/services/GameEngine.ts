@@ -53,11 +53,15 @@ export class GameEngine {
     );
   }
 
-  protected movePieceToTile(piece: ChessPiece, newPosition: string) {
+  protected _movePieceToTile(piece: ChessPiece, newPosition: string) {
     if (!this.isValidMove(piece, newPosition)) {
       throw new Error("Move is invalid");
     }
     this.updatePiecePosition(piece, newPosition);
+
+    if (this.isCurrentPlayerInCheck()) {
+      throw new Error("Player put self in check.... oops");
+    }
   }
 
   protected updatePiecePosition(piece: ChessPiece, newPosition: string) {
@@ -107,17 +111,19 @@ export class GameEngine {
   }
 
   protected isValidMove(piece: ChessPiece, newPosition: string): boolean {
-    return this._getAvailableMoves(piece.position).includes(newPosition);
+    return this._getAvailableMoves(piece.color, piece.position).includes(
+      newPosition
+    );
   }
 
   public getAvailableMoves(tileKey: string): string[] {
-    return this._getAvailableMoves(tileKey);
+    return this._getAvailableMoves(this.getWhosTurn(), tileKey);
   }
 
-  protected _getAvailableMoves(tileKey: string): string[] {
+  protected _getAvailableMoves(color: Color, tileKey: string): string[] {
     let playersPieces: Map<string, ChessPiece>;
     playersPieces =
-      this.gameState.whosTurn === Color.WHITE
+      color === Color.WHITE
         ? this.gameState.whitePieces
         : this.gameState.blackPieces;
 
@@ -132,7 +138,7 @@ export class GameEngine {
       return availableMoves;
     }
 
-    const enemyMoves = this.getEnemyMoves();
+    const enemyMoves = this.getEnemyMoves(color);
 
     for (let i = 0; i < availableMoves.length; i++) {
       if (enemyMoves.includes(availableMoves[i])) {
@@ -144,11 +150,9 @@ export class GameEngine {
     return availableMoves;
   }
 
-  protected getEnemyMoves(): string[] {
+  protected getEnemyMoves(color: Color): string[] {
     const enemyMoves: string[] =
-      this.gameState.whosTurn === Color.WHITE
-        ? this.getAllBlackMoves()
-        : this.getAllWhiteMoves();
+      color === Color.WHITE ? this.getAllBlackMoves() : this.getAllWhiteMoves();
 
     return enemyMoves;
   }
@@ -167,8 +171,8 @@ export class GameEngine {
     return whiteMoves.includes(blackKing.position);
   }
 
-  protected isEnemyNowInCheck(): boolean {
-    if (this.gameState.whosTurn === Color.WHITE) {
+  protected isKingNowInCheck(color: Color): boolean {
+    if (color === Color.BLACK) {
       const blackKing = this.getBlackKing();
       const whiteMoves = this.getAllWhiteMoves();
 
@@ -210,13 +214,46 @@ export class GameEngine {
     return availableBlackMoves;
   }
 
-  protected enemyHasAvailableMoves(): boolean {
-    const enemyPieces =
-      this.getWhosTurn() === Color.WHITE
-        ? this.gameState.blackPieces
-        : this.gameState.whitePieces;
+  protected enemyHasAvailableMoves(color: Color): boolean {
+    if (this.getKingAvailableMoves(color).length > 0) return true;
 
-    return true;
+    if (this.piecesCanSaveKing(color)) return true;
+
+    return false;
+  }
+
+  protected piecesCanSaveKing(color: Color): boolean {
+    const pieces =
+      color === Color.WHITE
+        ? this.gameState.whitePieces
+        : this.gameState.blackPieces;
+    const tempState: GameState = this.createTempGameState();
+
+    for (const [position, piece] of pieces as Map<string, ChessPiece>) {
+      const availableMoves = piece.getAvailableMoves(this.gameState);
+      const length = availableMoves.length;
+      for (let i = 0; i < length; i++) {
+        try {
+          this._movePieceToTile(piece, availableMoves[i]);
+        } catch (error) {
+          this.gameState = tempState;
+        }
+        if (!this.isKingNowInCheck(color)) {
+          this.gameState = tempState;
+          return true;
+        }
+        this.gameState = tempState;
+      }
+    }
+
+    return false;
+  }
+
+  protected getKingAvailableMoves(color: Color): string[] {
+    const king: ChessPiece =
+      color === Color.WHITE ? this.getWhiteKing() : this.getBlackKing();
+
+    return this._getAvailableMoves(king.color, king.position);
   }
 
   protected getAllWhiteMoves(): string[] {
@@ -258,36 +295,35 @@ export class GameEngine {
       return;
     }
 
-    //create temp game state
     const tempState: GameState = this.createTempGameState();
 
     try {
-      this.movePieceToTile(piece, newPosition);
+      this._movePieceToTile(piece, newPosition);
+      this.checkAndSetGameStatus();
+      this.changePlayer();
     } catch (error) {
-      throw new Error("Invalid move");
-    }
-
-    //check if game state is now valid
-    //If moving piece results in check, return no moves
-    if (this.isCurrentPlayerInCheck()) {
+      //Move was invalid
       this.gameState = tempState;
-      throw new Error("Can't put yourself in check");
+      throw new Error("Can't do mvoe");
     }
+  }
 
-    if (this.isEnemyNowInCheck()) {
-      if (!this.enemyHasAvailableMoves()) {
-        console.log("Checkmate!");
-        this.gameStatus = GameStatus.CHECKMATE;
+  protected checkAndSetGameStatus() {
+    const enemyColor: Color =
+      this.gameState.whosTurn === Color.WHITE ? Color.BLACK : Color.WHITE;
+
+    if (this.isKingNowInCheck(enemyColor)) {
+      if (!this.enemyHasAvailableMoves(enemyColor)) {
+        this.setGameStatus(GameStatus.CHECKMATE);
         return;
       }
-      console.log("check");
-      this.gameStatus = GameStatus.CHECK;
+      this.setGameStatus(GameStatus.CHECK);
     }
+    this.setGameStatus(GameStatus.ONGOING);
+  }
 
-    //if yes, great
-    //if no, is it check, checkmate, or stalemate?
-
-    this.changePlayer();
+  protected setGameStatus(status: GameStatus) {
+    this.gameStatus = status;
   }
 
   public getGameStatus(): GameStatus {
