@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext", // 👈 Vital for resolving 'lib'
+    "strict": true,
+    "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "lib": ["../lib/index.ts"],
+      "lib/types": ["../lib/types/enums.ts"],
+      "lib/*": ["../lib/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

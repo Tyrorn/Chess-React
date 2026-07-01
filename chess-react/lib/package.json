@@ -1,0 +1,34 @@
+{
+  "name": "lib",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    },
+    "./models": {
+      "types": "./index.ts",
+      "import": "./index.ts"
+    },
+    "./factories": {
+      "types": "./factories/PieceFactory.ts",
+      "import": "./factories/PieceFactory.ts"
+    },
+    "./services": {
+      "types": "./services/GameEngine.ts",
+      "import": "./services/GameEngine.ts"
+    },
+    "./types": {
+      "types": "./types/enum.ts",
+      "import": "./types/enum.ts"
+    },
+    "./data": {
+      "types": "./data/startingPosition.ts",
+      "import": "./data/startingPosition.ts"
+    }
+  }
+}
